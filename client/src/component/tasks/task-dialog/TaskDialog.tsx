@@ -55,7 +55,6 @@ export function TaskDialog({ open, task, onClose }: Props) {
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-
         <Button
           variant="contained"
           disabled={!isValid || isSaving}

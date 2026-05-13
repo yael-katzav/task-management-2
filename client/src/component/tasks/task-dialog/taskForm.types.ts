@@ -1,4 +1,4 @@
-import type { TaskType } from "../../../types/task/tasks.type"
+import { TaskType } from "@shared/task/task-type.enum"
 
 export type TaskFormValues = {
   type: TaskType | ""

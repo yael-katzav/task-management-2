@@ -1,4 +1,4 @@
-export type TaskType = "Procurement" | "Development"
+import { TaskType } from "@shared/task/task-type.enum"
 
 export type User = {
   id: number

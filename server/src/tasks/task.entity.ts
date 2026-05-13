@@ -38,13 +38,19 @@ export class TaskEntity {
 
   @OneToOne(
     () => DevelopmentTaskEntity,
-    (developmentTask) => developmentTask.task
+    (developmentTask) => developmentTask.task,
+    {
+      cascade: true,
+    }
   )
   developmentTask?: DevelopmentTaskEntity
 
   @OneToOne(
     () => ProcurementTaskEntity,
-    (procurementTask) => procurementTask.task
+    (procurementTask) => procurementTask.task,
+    {
+      cascade: true,
+    }
   )
   procurementTask?: ProcurementTaskEntity
 }

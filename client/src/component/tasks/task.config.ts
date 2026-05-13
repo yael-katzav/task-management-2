@@ -1,4 +1,4 @@
-import type { TaskType } from "../../types/task/tasks.type"
+import { TaskType } from "@shared/task/task-type.enum"
 
 export const CURRENT_USER_ID = 1
 
@@ -9,8 +9,8 @@ export type TaskFieldConfig = {
 }
 
 export const taskTypeOptions: { value: TaskType; label: string }[] = [
-  { value: "Development", label: "Development Task" },
-  { value: "Procurement", label: "Procurement Task" },
+  { value: TaskType.Development, label: "Development Task" },
+  { value: TaskType.Procurement, label: "Procurement Task" },
 ]
 
 export const taskFieldsByType: Record<TaskType, TaskFieldConfig[]> = {

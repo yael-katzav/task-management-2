@@ -1,12 +1,10 @@
-import { TaskType } from "@shared/task/task-type.enum"
 import { ChangeTaskStatusDto, CreateTaskDto } from "@shared/task/task.type"
 import { BadRequestError } from "src/errors/BadRequestError.error"
 import { UserEntity } from "src/users/user.entity"
 import { AppDataSource } from "../data-source"
-import { DevelopmentTaskEntity } from "../development-tasks/development-task.entity"
-import { ProcurementTaskEntity } from "../procurement-tasks/procurement-task.entity"
 import { TASK_HANDLERS } from "./handlers.const"
 import { TaskEntity } from "./task.entity"
+import { mapTaskResponse } from "./task.util"
 
 const taskRepository = AppDataSource.getRepository(TaskEntity)
 const userRepository = AppDataSource.getRepository(UserEntity)
@@ -17,10 +15,10 @@ const TASK_RELATIONS = {
   procurementTask: true,
 } as const
 
-const getAll = () =>
-  taskRepository.find({
-    relations: TASK_RELATIONS,
-  })
+const getAll = async () => {
+  const tasks = await taskRepository.find({ relations: TASK_RELATIONS })
+  return tasks.map(mapTaskResponse)
+}
 
 const getByUserId = (userId: number) =>
   taskRepository.find({
@@ -30,13 +28,14 @@ const getByUserId = (userId: number) =>
     relations: TASK_RELATIONS,
   })
 
-const getById = (taskId: string) =>
-  taskRepository.findOne({
-    where: {
-      id: taskId,
-    },
+const getById = async (taskId: string) => {
+  const task = await taskRepository.findOne({
+    where: { id: taskId },
     relations: TASK_RELATIONS,
   })
+
+  return task ? mapTaskResponse(task) : null
+}
 
 const validateAssignedUserExists = async (assignedUserId: number) => {
   const userExists = await userRepository.exists({
@@ -60,13 +59,9 @@ const createTask = async ({ type, assignedUserId }: CreateTaskDto) => {
     isClosed: false,
   })
 
-  if (type === TaskType.Development) {
-    task.developmentTask = new DevelopmentTaskEntity()
-  }
+  const handler = TASK_HANDLERS[type]
 
-  if (type === TaskType.Procurement) {
-    task.procurementTask = new ProcurementTaskEntity()
-  }
+  handler.createDetailsEntity(task)
 
   await taskRepository.save(task)
 
@@ -87,22 +82,23 @@ const changeStatus = async (
     throw new BadRequestError("Closed task is immutable.")
   }
 
-  if (newStatus > task.status + 1) {
+  if (Number(newStatus) > task.status + 1) {
     throw new BadRequestError("Forward status moves must be sequential.")
   }
 
-  await validateAssignedUserExists(assignedUserId)
+  await validateAssignedUserExists(Number(assignedUserId))
 
   const handler = TASK_HANDLERS[task.type]
 
-  handler.validateStatusData(newStatus, data)
+  handler.validateStatusData(Number(newStatus), data ?? {})
+  handler.applyData(task, data ?? {})
 
-  handler.applyData(task, data)
+  await handler.saveDetails(task)
 
-  task.status = newStatus
-  task.assignedUserId = assignedUserId
-
-  await taskRepository.save(task)
+  await taskRepository.update(task.id, {
+    status: Number(newStatus),
+    assignedUserId: Number(assignedUserId),
+  })
 
   return getById(task.id)
 }

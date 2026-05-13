@@ -1,6 +1,8 @@
 import { MenuItem, TextField } from "@mui/material"
 import { Controller, type Control } from "react-hook-form"
-import type { TaskResponse, TaskType } from "../../../types/task/tasks.type"
+import type { TaskResponse } from "../../../types/task/tasks.type"
+import { TaskType } from "@shared/task/task-type.enum"
+
 import { taskStatusesByType } from "../task.config"
 import type { TaskFormValues } from "./taskForm.types"
 
