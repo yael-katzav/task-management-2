@@ -1,33 +1,44 @@
 # Task Management Platform
 
-A full-stack extensible task-management platform built with:
+An extensible full-stack task management platform built with:
 
-* ASP.NET Core Web API
-* Entity Framework Core
-* SQLite
-* React
-* TypeScript
-* React Query
-* React Hook Form
-* Material UI
+- Node.js
+- Express
+- TypeScript
+- TypeORM
+- SQLite
+- React
+- React Query
+- React Hook Form
+- Material UI
 
 ---
 
-# Features
+# Overview
 
-## General Workflow Rules
+This project implements a generic task workflow engine that separates:
 
-The platform supports generic workflow rules shared across all task types:
+- General workflow rules shared across all task types
+- Task-specific business logic
 
-* Every task is assigned to exactly one user
-* Tasks can be Open or Closed
-* Closed tasks are immutable
-* Statuses use ascending integers
-* Forward moves must be sequential
-* Backward moves are allowed
-* Tasks can only be closed at their final status
-* Every status change validates required task-specific data
-* Every status change requires assigning the next user
+The architecture was designed to support adding new task types without modifying the core workflow engine.
+
+---
+
+# Core Workflow Rules
+
+The following rules apply to all task types:
+
+1. A task is assigned to exactly one user at any moment
+2. A task is either Open or Closed
+3. Closed tasks are immutable
+4. Statuses use ascending integers (`1 → 2 → 3`)
+5. Forward transitions must be sequential
+6. Backward transitions are allowed
+7. A task may only be closed at its final status
+8. Every status change:
+   - validates task-specific required fields
+   - records the next assigned user
 
 ---
 
@@ -37,16 +48,18 @@ The platform supports generic workflow rules shared across all task types:
 
 ### Statuses
 
-1. Created
-2. Supplier offers received
-3. Purchase completed
+| Status | Meaning |
+|---|---|
+| 1 | Created |
+| 2 | Supplier offers received |
+| 3 | Purchase completed |
 
-### Required Data
+### Required Fields
 
 | Status | Required Fields |
-| ------ | --------------- |
-| 2      | quote1, quote2  |
-| 3      | receipt         |
+|---|---|
+| 2 | quote1, quote2 |
+| 3 | receipt |
 
 ---
 
@@ -54,93 +67,114 @@ The platform supports generic workflow rules shared across all task types:
 
 ### Statuses
 
-1. Created
-2. Specification completed
-3. Development completed
-4. Distribution completed
+| Status | Meaning |
+|---|---|
+| 1 | Created |
+| 2 | Specification completed |
+| 3 | Development completed |
+| 4 | Distribution completed |
 
-### Required Data
+### Required Fields
 
 | Status | Required Fields |
-| ------ | --------------- |
-| 2      | specification   |
-| 3      | branchName      |
-| 4      | version         |
+|---|---|
+| 2 | specification |
+| 3 | branchName |
+| 4 | version |
 
 ---
 
-# Project Structure
+# Backend Architecture
 
-## Backend
+The backend is built using:
 
-* ASP.NET Core REST API
-* Entity Framework Core
-* SQLite
-* Task-type handlers for extensibility
+- Express
+- TypeScript
+- TypeORM
+- SQLite
 
-## Frontend
+## Design Approach
 
-* React + TypeScript
-* React Query for server state
-* React Hook Form for form management
-* Material UI components
+The project separates:
 
----
+- Generic workflow logic
+- Task-specific behavior
 
-# Database Design
+Generic workflow rules are implemented once in the shared task service.
 
-The application uses SQLite with Entity Framework Core.
+Task-specific logic is implemented through dedicated task handlers.
 
-SQLite was chosen to keep the project lightweight and easy to run locally without requiring installation or configuration of a separate database server.
+Each task handler is responsible for:
 
-The system is built around a generic `Task` entity that stores shared workflow data:
+- validating required fields
+- applying task-specific data
+- creating task-specific entities
+- defining the final status
 
-* assigned user
-* current status
-* open/closed state
-* task type
-* timestamps
-
-Task-specific data is separated into dedicated tables:
-
-* `DevelopmentTask`
-* `ProcurementTask`
-
-Each task-specific table has a one-to-one relationship with the main `Task` entity.
-
-This structure keeps the workflow engine generic while allowing task-specific fields and validations to evolve independently.
+This allows new task types to be added without modifying the existing workflow engine.
 
 ---
 
-# Extensibility Approach
+# Frontend Architecture
 
-The system separates:
+The frontend is built using:
 
-* Generic workflow rules
-* Task-specific behavior
+- React
+- TypeScript
+- React Query
+- React Hook Form
+- Material UI
 
-Task-specific logic is implemented through task handlers on the backend and configuration records on the frontend.
+## Features
 
-Adding a new task type requires:
+- Create task
+- Change task status
+- Move task backward and forward
+- Close task
+- View all tasks
+- View tasks assigned to a specific user
+- Dynamic task forms based on task type
+- Validation rules synchronized with backend workflow rules
 
-## Backend
+---
 
-1. Create a new task entity/details model
-2. Implement `ITaskTypeHandler`
-3. Register the handler
+# Database
 
-No changes are required to the generic workflow engine.
+The project uses SQLite with TypeORM migrations.
 
-## Frontend
+The database schema includes:
 
-1. Add the new task type to configuration records:
+- users
+- tasks
+- development_tasks
+- procurement_tasks
 
-   * statuses
-   * labels
-   * required fields
-   * final status
+Task-specific data is stored in dedicated tables linked to the generic `tasks` table through one-to-one relations.
 
-No structural UI changes are required.
+---
+
+# Demo Users
+
+Seeded demo users are included through migrations.
+
+These users can be used for:
+
+- task assignment
+- reassignment
+- filtering tasks
+
+---
+
+# API Endpoints
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/tasks` | Get all tasks |
+| GET | `/api/tasks/user/:userId` | Get tasks assigned to user |
+| POST | `/api/tasks` | Create task |
+| PUT | `/api/tasks/:taskId/status` | Change task status |
+| PUT | `/api/tasks/:taskId/close` | Close task |
+| GET | `/api/users` | Get users |
 
 ---
 
@@ -150,33 +184,29 @@ No structural UI changes are required.
 
 ### Requirements
 
-* .NET 8
+- Node.js 20+
+- npm
 
 ### Setup
 
 ```bash
 cd server
+npm install
 ```
 
-Update the connection string in:
-
-```txt
-appsettings.json
-```
-
-Run migrations:
+### Run migrations
 
 ```bash
-dotnet ef database update
+npm run migration:run
 ```
 
-Run the server:
+### Start server
 
 ```bash
-dotnet run
+npm run dev
 ```
 
-The API will run on:
+The backend runs on:
 
 ```txt
 http://localhost:5252
@@ -186,10 +216,6 @@ http://localhost:5252
 
 ## Frontend
 
-### Requirements
-
-* Node.js
-
 ### Setup
 
 ```bash
@@ -198,7 +224,7 @@ npm install
 npm run dev
 ```
 
-The client will run on:
+The frontend runs on:
 
 ```txt
 http://localhost:5173
@@ -206,36 +232,37 @@ http://localhost:5173
 
 ---
 
-# Seeded Demo Users
+# Extending the System
 
-The database includes seeded demo users for testing purposes.
+To add a new task type:
 
-These users can be used for:
+## Backend
 
-* task assignment
-* task filtering
-* task reassignment
+1. Create a new task details entity
+2. Create a new task handler
+3. Register the handler in `TASK_HANDLERS`
 
----
+No modifications are required in the generic workflow logic.
 
-# Main API Endpoints
+## Frontend
 
-| Method | Endpoint                   | Description                  |
-| ------ | -------------------------- | ---------------------------- |
-| GET    | /api/tasks                 | Get all tasks                |
-| GET    | /api/tasks/user/{userId}   | Get tasks assigned to a user |
-| POST   | /api/tasks                 | Create task                  |
-| PUT    | /api/tasks/{taskId}/status | Change task status           |
-| PUT    | /api/tasks/{taskId}/close  | Close task                   |
+1. Add task configuration:
+   - statuses
+   - labels
+   - required fields
+   - final status
+
+No structural UI changes are required.
 
 ---
 
 # Notes
 
-This project focuses primarily on:
+This project focuses on:
 
-* clean architecture
-* extensibility
-* separation of concerns
-* reusable UI structure
-* workflow validation
+- extensible architecture
+- reusable workflow logic
+- clean separation of concerns
+- generic task handling
+- scalable frontend structure
+- maintainable TypeScript code
