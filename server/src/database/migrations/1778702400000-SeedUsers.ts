@@ -9,7 +9,7 @@ export class SeedUsers1778702400000 implements MigrationInterface {
       ('Yael'),
       ('Eyal'),
       ('Nadav'),
-      ('Shelly'),
+      ('Shelly');
     `)
   }
 
