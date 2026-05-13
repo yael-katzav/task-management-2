@@ -21,7 +21,7 @@ This project implements a generic task workflow engine that separates:
 - General workflow rules shared across all task types
 - Task-specific business logic
 
-The architecture was designed to support adding new task types without modifying the core workflow engine.
+The architecture supports adding new task types without changing the core workflow logic.
 
 ---
 
@@ -100,7 +100,7 @@ The project separates:
 - Generic workflow logic
 - Task-specific behavior
 
-Generic workflow rules are implemented once in the shared task service.
+Shared workflow rules are handled in the main task service.
 
 Task-specific logic is implemented through dedicated task handlers.
 
@@ -265,4 +265,3 @@ This project focuses on:
 - clean separation of concerns
 - generic task handling
 - scalable frontend structure
-- maintainable TypeScript code
