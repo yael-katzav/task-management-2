@@ -21,18 +21,20 @@ const getEntityById = (taskId: string) =>
     relations: TASK_RELATIONS,
   })
 
-const getAll = async () => {
+const getAll = async (includeClosed = false) => {
   const tasks = await taskRepository.find({
+    where: includeClosed ? {} : { isClosed: false },
     relations: TASK_RELATIONS,
   })
 
   return tasks.map(mapTaskResponse)
 }
 
-const getByUserId = async (userId: number) => {
+const getByUserId = async (userId: number, includeClosed = false) => {
   const tasks = await taskRepository.find({
     where: {
       assignedUserId: userId,
+      ...(includeClosed ? {} : { isClosed: false }),
     },
     relations: TASK_RELATIONS,
   })

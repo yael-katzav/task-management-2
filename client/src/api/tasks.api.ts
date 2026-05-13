@@ -14,13 +14,22 @@ const handleResponse = async <T>(response: Response): Promise<T> => {
   return response.json()
 }
 
-export const getTasks = async () => {
-  const response = await fetch(`${API_URL}/api/tasks`)
+export const getTasks = async (includeClosed: boolean) => {
+  const response = await fetch(
+    `${API_URL}/api/tasks?includeClosed=${includeClosed}`
+  )
+
   return handleResponse<TaskResponse[]>(response)
 }
 
-export const getTasksByUserId = async (userId: number) => {
-  const response = await fetch(`${API_URL}/api/tasks/user/${userId}`)
+export const getTasksByUserId = async (
+  userId: number,
+  includeClosed: boolean
+) => {
+  const response = await fetch(
+    `${API_URL}/api/tasks/user/${userId}?includeClosed=${includeClosed}`
+  )
+
   return handleResponse<TaskResponse[]>(response)
 }
 

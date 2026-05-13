@@ -21,14 +21,21 @@ taskRoutes.put("/:taskId/close", async (req, res) => {
   res.sendStatus(204)
 })
 
-taskRoutes.get("/", async (_req, res) => {
-  const tasks = await taskService.getAll()
+taskRoutes.get("/", async (req, res) => {
+  const includeClosed = req.query.includeClosed === "true"
+
+  const tasks = await taskService.getAll(includeClosed)
 
   res.json(tasks)
 })
 
 taskRoutes.get("/user/:userId", async (req, res) => {
-  const tasks = await taskService.getByUserId(Number(req.params.userId))
+  const includeClosed = req.query.includeClosed === "true"
+
+  const tasks = await taskService.getByUserId(
+    Number(req.params.userId),
+    includeClosed
+  )
 
   res.json(tasks)
 })

@@ -1,9 +1,16 @@
 import AddIcon from "@mui/icons-material/Add"
-import { Box, Button, Stack, Typography } from "@mui/material"
+import {
+  Box,
+  Button,
+  FormControlLabel,
+  Stack,
+  Switch,
+  Typography,
+} from "@mui/material"
 import "sweetalert2/dist/sweetalert2.min.css"
 import type { TasksView } from "../../api/useTasks"
-import type { TaskResponse } from "../../types/task/tasks.type"
 import "../../App.css"
+import type { TaskResponse } from "../../types/task/tasks.type"
 import AssignedToField from "./AssignedToField"
 
 type Props = {
@@ -11,6 +18,8 @@ type Props = {
   tasksView: TasksView
   setOpenDialog: React.Dispatch<React.SetStateAction<boolean>>
   setSelectedTask: React.Dispatch<React.SetStateAction<TaskResponse | null>>
+  setIncludeClosed: React.Dispatch<React.SetStateAction<boolean>>
+  includeClosed: boolean
 }
 
 const TaskManagementPageHeader: React.FC<Props> = ({
@@ -18,6 +27,8 @@ const TaskManagementPageHeader: React.FC<Props> = ({
   tasksView,
   setOpenDialog,
   setSelectedTask,
+  setIncludeClosed,
+  includeClosed,
 }) => {
   const handleCreate = () => {
     setSelectedTask(null)
@@ -32,6 +43,15 @@ const TaskManagementPageHeader: React.FC<Props> = ({
         </Typography>
       </Box>
       <Stack direction="row" spacing={2}>
+        <FormControlLabel
+          control={
+            <Switch
+              checked={includeClosed}
+              onChange={(event) => setIncludeClosed(event.target.checked)}
+            />
+          }
+          label="Include closed"
+        />
         <AssignedToField setTasksView={setTasksView} tasksView={tasksView} />
         <Button
           variant="contained"

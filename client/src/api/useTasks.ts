@@ -4,10 +4,13 @@ import { closeTask, createTask, getTasks, getTasksByUserId } from "./tasks.api"
 
 export type TasksView = "all" | number
 
-export function useTasks(view: TasksView) {
+export const useTasks = (view: TasksView, includeClosed: boolean) => {
   return useQuery({
-    queryKey: ["tasks", view],
-    queryFn: () => (view === "all" ? getTasks() : getTasksByUserId(view)),
+    queryKey: ["tasks", view, includeClosed],
+    queryFn: () =>
+      view === "all"
+        ? getTasks(includeClosed)
+        : getTasksByUserId(view, includeClosed),
   })
 }
 

@@ -1,3 +1,4 @@
+import type { ChipProps } from "@mui/material"
 import { TaskType } from "@shared/task/task-type.enum"
 
 export const DEMO_CURRENT_USER_ID = 1
@@ -51,3 +52,23 @@ export const finalStatusByTaskType: Record<TaskType, number> = {
 }
 
 export const TASKS_COLUMNS = ["Task", "Status", "Assigned", "State", "Created"]
+
+export const taskStatusColorByType: Record<
+  TaskType,
+  Record<number, ChipProps["color"]>
+> = {
+  [TaskType.Development]: {
+    1: "default",
+    2: "info",
+    3: "warning",
+    4: "success",
+  },
+  [TaskType.Procurement]: {
+    1: "default",
+    2: "warning",
+    3: "success",
+  },
+}
+
+export const getTaskStatusColor = (type: TaskType, status: number) =>
+  taskStatusColorByType[type]?.[status] ?? "default"

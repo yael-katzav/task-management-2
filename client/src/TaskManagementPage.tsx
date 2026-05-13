@@ -7,13 +7,15 @@ import { TaskDialog } from "./component/tasks/task-dialog/TaskDialog"
 import TaskManagementPageHeader from "./component/tasks/TaskManagementPageHeader"
 import TaskManagementTable from "./component/tasks/TaskManagementTable"
 import type { TaskResponse } from "./types/task/tasks.type"
+import TaskSummaryCards from "./component/tasks/task-summary-cards/TaskSummaryCards"
 
 function TaskManagementPage() {
   const [tasksView, setTasksView] = useState<TasksView>("all")
   const [openDialog, setOpenDialog] = useState(false)
   const [selectedTask, setSelectedTask] = useState<TaskResponse | null>(null)
+  const [includeClosed, setIncludeClosed] = useState(false)
 
-  const { data: tasks = [], isLoading } = useTasks(tasksView)
+  const { data: tasks = [], isLoading } = useTasks(tasksView, includeClosed)
 
   const handleCloseDialog = () => {
     setOpenDialog(false)
@@ -24,11 +26,14 @@ function TaskManagementPage() {
     <Box className="tasks-page">
       <Container maxWidth="lg">
         <Stack spacing={3}>
+          <TaskSummaryCards tasks={tasks} />
           <TaskManagementPageHeader
             tasksView={tasksView}
             setTasksView={setTasksView}
             setOpenDialog={setOpenDialog}
             setSelectedTask={setSelectedTask}
+            includeClosed={includeClosed}
+            setIncludeClosed={setIncludeClosed}
           />
           {isLoading && (
             <Paper className="state-card">

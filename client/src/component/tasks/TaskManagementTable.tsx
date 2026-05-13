@@ -1,11 +1,11 @@
 import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined"
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined"
-import { Box, Chip, Paper, Typography } from "@mui/material"
+import { Box, Chip, Paper, Stack, Typography } from "@mui/material"
 import { type FC } from "react"
 import "sweetalert2/dist/sweetalert2.min.css"
 import { useCloseTask } from "../../api/useTasks"
 import type { TaskResponse } from "../../types/task/tasks.type"
-import { TASKS_COLUMNS } from "./task.config"
+import { getTaskStatusColor, TASKS_COLUMNS } from "./task.config"
 import { getTaskStatusLabel } from "./taskLabels"
 import { handleCloseTaskClick } from "./tasks.util"
 
@@ -47,16 +47,21 @@ const TaskManagementTable: FC<Props> = ({
                 <Box className="task-icon">
                   <AssignmentOutlinedIcon fontSize="small" />
                 </Box>
-                <Box>
-                  <Typography className="task-type">
-                    Type: {task.type}
+                <Stack spacing={0.5}>
+                  <Typography className="task-title">
+                    {task.type} Task
                   </Typography>
-                </Box>
+                  <Typography className="task-subtitle">
+                    ID: {task.id.slice(0, 8)}
+                  </Typography>
+                </Stack>
               </Box>
               <Box className="task-cell">
                 <Chip
                   size="small"
                   label={getTaskStatusLabel(task.type, task.status)}
+                  color={getTaskStatusColor(task.type, task.status)}
+                  variant="filled"
                 />
               </Box>
               <Box className="task-cell assigned-cell">
