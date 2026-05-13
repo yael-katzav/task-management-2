@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+
+# Environment files
+.env
+.env.*
+
+# Logs
+logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Build outputs
+dist/
+build/
+
+# Coverage
+coverage/
+
+# React client
+/client/dist/
+
+# .NET server
+/server/bin/
+/server/obj/
+
+# SQLite
+/server/*.db
+/server/*.db-shm
+/server/*.db-wal
