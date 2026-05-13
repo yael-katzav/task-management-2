@@ -5,7 +5,7 @@ import { type FC } from "react"
 import "sweetalert2/dist/sweetalert2.min.css"
 import { useCloseTask } from "../../api/useTasks"
 import type { TaskResponse } from "../../types/task/tasks.type"
-import { TASKS_COLUMS } from "./task.config"
+import { TASKS_COLUMNS } from "./task.config"
 import { getTaskStatusLabel } from "./taskLabels"
 import { handleCloseTaskClick } from "./tasks.util"
 
@@ -31,7 +31,7 @@ const TaskManagementTable: FC<Props> = ({
       {tasks.length > 0 && (
         <Paper className="tasks-list">
           <Box className="tasks-list-header">
-            {TASKS_COLUMS.map((column) => (
+            {TASKS_COLUMNS.map((column) => (
               <Typography key={column} className="list-column">
                 {column}
               </Typography>

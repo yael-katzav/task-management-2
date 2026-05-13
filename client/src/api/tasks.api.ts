@@ -19,6 +19,11 @@ export const getTasks = async () => {
   return handleResponse<TaskResponse[]>(response)
 }
 
+export const getTasksByUserId = async (userId: number) => {
+  const response = await fetch(`${API_URL}/api/tasks/user/${userId}`)
+  return handleResponse<TaskResponse[]>(response)
+}
+
 export const createTask = async (request: CreateTaskRequest) => {
   const response = await fetch(`${API_URL}/api/tasks`, {
     method: "POST",

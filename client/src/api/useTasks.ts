@@ -1,23 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import axios from "axios"
-import type { CreateTaskRequest, TaskResponse } from "../types/task/tasks.type"
-import { API_URL } from "./api.const"
-import { closeTask, createTask } from "./tasks.api"
+import type { CreateTaskRequest } from "../types/task/tasks.type"
+import { closeTask, createTask, getTasks, getTasksByUserId } from "./tasks.api"
 
 export type TasksView = "all" | number
 
 export function useTasks(view: TasksView) {
   return useQuery({
     queryKey: ["tasks", view],
-    queryFn: async () => {
-      const url =
-        view === "all"
-          ? `${API_URL}/api/tasks`
-          : `${API_URL}/api/tasks/user/${view}`
-
-      const response = await axios.get<TaskResponse[]>(url)
-      return response.data
-    },
+    queryFn: () => (view === "all" ? getTasks() : getTasksByUserId(view)),
   })
 }
 

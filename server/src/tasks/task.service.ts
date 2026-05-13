@@ -15,24 +15,33 @@ const TASK_RELATIONS = {
   procurementTask: true,
 } as const
 
+const getEntityById = (taskId: string) =>
+  taskRepository.findOne({
+    where: { id: taskId },
+    relations: TASK_RELATIONS,
+  })
+
 const getAll = async () => {
-  const tasks = await taskRepository.find({ relations: TASK_RELATIONS })
+  const tasks = await taskRepository.find({
+    relations: TASK_RELATIONS,
+  })
+
   return tasks.map(mapTaskResponse)
 }
 
-const getByUserId = (userId: number) =>
-  taskRepository.find({
+const getByUserId = async (userId: number) => {
+  const tasks = await taskRepository.find({
     where: {
       assignedUserId: userId,
     },
     relations: TASK_RELATIONS,
   })
 
+  return tasks.map(mapTaskResponse)
+}
+
 const getById = async (taskId: string) => {
-  const task = await taskRepository.findOne({
-    where: { id: taskId },
-    relations: TASK_RELATIONS,
-  })
+  const task = await getEntityById(taskId)
 
   return task ? mapTaskResponse(task) : null
 }
@@ -72,7 +81,7 @@ const changeStatus = async (
   taskId: string,
   { newStatus, assignedUserId, data }: ChangeTaskStatusDto
 ) => {
-  const task = await getById(taskId)
+  const task = await getEntityById(taskId)
 
   if (!task) {
     throw new BadRequestError("Task not found.")
@@ -104,7 +113,7 @@ const changeStatus = async (
 }
 
 const closeTask = async (taskId: string) => {
-  const task = await getById(taskId)
+  const task = await getEntityById(taskId)
 
   if (!task) {
     throw new BadRequestError("Task not found.")
@@ -120,9 +129,9 @@ const closeTask = async (taskId: string) => {
     throw new BadRequestError("Task can only be closed at final status.")
   }
 
-  task.isClosed = true
-
-  await taskRepository.save(task)
+  await taskRepository.update(task.id, {
+    isClosed: true,
+  })
 }
 
 export default {

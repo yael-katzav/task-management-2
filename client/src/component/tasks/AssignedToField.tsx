@@ -4,7 +4,7 @@ import "sweetalert2/dist/sweetalert2.min.css"
 import type { TasksView } from "../../api/useTasks"
 import { useUsers } from "../../api/useUsers"
 import "../../App.css"
-import { CURRENT_USER_ID } from "./task.config"
+import { DEMO_CURRENT_USER_ID } from "./task.config"
 
 type Props = {
   setTasksView: Dispatch<SetStateAction<TasksView>>
@@ -27,9 +27,9 @@ const AssignedToField: FC<Props> = ({ setTasksView, tasksView }) => {
       sx={{ minWidth: 180 }}
     >
       <MenuItem value="all">All Tasks</MenuItem>
-      <MenuItem value={CURRENT_USER_ID}>My Tasks</MenuItem>
+      <MenuItem value={DEMO_CURRENT_USER_ID}>My Tasks</MenuItem>
       {users
-        .filter((user) => user.id !== CURRENT_USER_ID)
+        .filter((user) => user.id !== DEMO_CURRENT_USER_ID)
         .map((user) => (
           <MenuItem key={user.id} value={user.id}>
             {user.name}

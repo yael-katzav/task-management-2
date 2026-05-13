@@ -1,6 +1,6 @@
 import { TaskType } from "@shared/task/task-type.enum"
 
-export const CURRENT_USER_ID = 1
+export const DEMO_CURRENT_USER_ID = 1
 
 export type TaskFieldConfig = {
   name: string
@@ -50,4 +50,4 @@ export const finalStatusByTaskType: Record<TaskType, number> = {
   Procurement: 3,
 }
 
-export const TASKS_COLUMS = ["Task", "Status", "Assigned", "State", "Created"]
+export const TASKS_COLUMNS = ["Task", "Status", "Assigned", "State", "Created"]

@@ -1,27 +1,18 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import axios from "axios"
-import { API_URL } from "./api.const"
+import type { ChangeTaskStatusRequest } from "../types/task/tasks.type"
+import { changeTaskStatus } from "./tasks.api"
 
 type ChangeTaskStatusParams = {
   taskId: string
-  data: {
-    newStatus: number
-    assignedUserId: number
-    data: Record<string, unknown>
-  }
+  data: ChangeTaskStatusRequest
 }
 
 export function useChangeTaskStatus() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async ({ taskId, data }: ChangeTaskStatusParams) => {
-      const response = await axios.put(
-        `${API_URL}/api/tasks/${taskId}/status`,
-        data
-      )
-      return response.data
-    },
+    mutationFn: ({ taskId, data }: ChangeTaskStatusParams) =>
+      changeTaskStatus(taskId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] })
     },
